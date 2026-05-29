@@ -1,0 +1,11 @@
+C:\ProyectosJava\tienda\src\main\java\com\elias\aplicacion\impl\ProductoServicioImpl.java
+C:\ProyectosJava\tienda\src\main\java\com\elias\aplicacion\ProductoServicio.java
+C:\ProyectosJava\tienda\src\main\java\com\elias\App.java
+C:\ProyectosJava\tienda\src\main\java\com\elias\dominio\Producto.java
+C:\ProyectosJava\tienda\src\main\java\com\elias\dominio\repositorio\ProductoRepositorio.java
+C:\ProyectosJava\tienda\src\main\java\com\elias\infraestructura\configuracion\ApplicationConfig.java
+C:\ProyectosJava\tienda\src\main\java\com\elias\infraestructura\persistencia\ProductoRepositorioImpl.java
+C:\ProyectosJava\tienda\src\main\java\com\elias\interfaces\dto\ProductoDTO.java
+C:\ProyectosJava\tienda\src\main\java\com\elias\interfaces\dto\ProductoResponseDTO.java
+C:\ProyectosJava\tienda\src\main\java\com\elias\interfaces\mapper\ProductoMapper.java
+C:\ProyectosJava\tienda\src\main\java\com\elias\interfaces\ProductoAPI.java

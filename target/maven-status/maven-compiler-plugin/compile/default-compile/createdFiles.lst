@@ -1,0 +1,11 @@
+com\elias\dominio\Producto.class
+com\elias\aplicacion\impl\ProductoServicioImpl.class
+com\elias\aplicacion\ProductoServicio.class
+com\elias\interfaces\ProductoAPI.class
+com\elias\infraestructura\configuracion\ApplicationConfig.class
+com\elias\interfaces\mapper\ProductoMapper.class
+com\elias\infraestructura\persistencia\ProductoRepositorioImpl.class
+com\elias\interfaces\dto\ProductoResponseDTO.class
+com\elias\dominio\repositorio\ProductoRepositorio.class
+com\elias\interfaces\dto\ProductoDTO.class
+com\elias\App.class

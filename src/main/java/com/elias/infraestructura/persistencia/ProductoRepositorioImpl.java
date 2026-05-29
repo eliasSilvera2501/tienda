@@ -22,7 +22,7 @@ public class ProductoRepositorioImpl implements ProductoRepositorio{
 
     @Override
     public Producto obtenerPorId(Long id){
-        em.find(Producto.class,id);
+        return em.find(Producto.class,id);
     }
 
     @Override
@@ -38,12 +38,9 @@ public class ProductoRepositorioImpl implements ProductoRepositorio{
         return producto;
     }
 
-    public void eliminar(Long id){
-        Producto producto=em.find(Producto.class,id);
-        if(producto!=null){
+    public void eliminar(Producto producto){
+        
             em.remove(producto);
-        }else{
-            throw new IllegalArgumentException("No existe el producto con ese id");
-        }
+        
     }
 }

@@ -15,17 +15,15 @@ public class ProductoMapper {
     }
 
     public static List<ProductoResponseDTO> convertirToListaDTO(List<Producto> productos){
+
+        
         List <ProductoResponseDTO> listaPRD = new ArrayList<>();
         for(Producto p : productos){
             listaPRD.add(convertirToDTO(p));
         }
 
-        if(listaPRD.isEmpty()){
-            throw new IllegalArgumentException("La lista no contiene informacion");
-        }else{
-            return listaPRD;
-        }
-            
+        return listaPRD;
+
 
     }
 }

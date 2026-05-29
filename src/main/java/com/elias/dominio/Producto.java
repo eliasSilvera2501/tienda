@@ -17,11 +17,11 @@ public class Producto {
 
     private String nombre;
     private double precio;
-    private int stock;
+    private Integer stock;
 
     public Producto(){}
 
-    public Producto(String nombre, double precio, int stock){
+    public Producto(String nombre, double precio, Integer stock){
         this.nombre=nombre;
         this.precio=precio;
         this.stock=stock;
@@ -39,7 +39,7 @@ public class Producto {
         return precio;
     }
 
-    public int getStock(){
+    public Integer getStock(){
         return stock;
     }
 
@@ -50,7 +50,7 @@ public class Producto {
     public void setPrecio(double precio){
         this.precio=precio;
     }
-    public void setStock(int stock){
+    public void setStock(Integer stock){
         this.stock=stock;
     }
 

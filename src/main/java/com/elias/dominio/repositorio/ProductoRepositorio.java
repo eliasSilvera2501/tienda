@@ -10,6 +10,6 @@ public interface ProductoRepositorio {
     Producto obtenerPorId(Long id);
     Producto guardar(Producto producto);
     Producto actualizar(Producto producto);
-    void eliminar (Long id);
+    void eliminar (Producto producto);
 
 }
