@@ -126,7 +126,7 @@ Configura `username=12345678` y `password=clave123` para `http://localhost:8080`
 - **Línea roja (200):** consultas que llegaron al servidor y fueron respondidas — había lugar en el balde. Al principio la línea arranca más alta porque el balde empieza lleno con 10 tokens. Una vez que se gastan esos tokens iniciales, se estabiliza en ~5 por segundo, que es cuántos tokens se agregan por segundo.
 - **Línea azul (429):** consultas bloqueadas — el balde estaba vacío.
 
-La relación entre la configuración y el resultado de la grafica: JMeter manda 15 consultas por segundo, el límite deja pasar 5 (los que se recargan por segundo) y bloquea 10. Por eso rojo + azul ≈ 15 en cada segundo — lo que cambia es cuántas pasan y cuántas son bloqueadas dependiendo de cuántos tokens haya en el balde en ese momento.
+La relación entre la configuración y el resultado de la grafica: JMeter manda 15 consultas por segundo, el límite deja pasar 5 (los que se recargan por segundo) y bloquea 10. Por eso rojo + azul = 15 en cada segundo — lo que cambia es cuántas pasan y cuántas son bloqueadas dependiendo de cuántos tokens haya en el balde en ese momento.
 ---
 
 ### Pruebas con curl
