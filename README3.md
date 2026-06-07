@@ -21,7 +21,7 @@ Algo asi:
 Authorization: Basic MTIzNDU2N....
 ```
 
-Lo que viaja codificado es simplemente `cedula:contraseña`. WildFly decodifica eso y llama al `ClienteIdentityStore`, que busca al cliente en la base de datos y verifica la contraseña usando BCrypt.
+Lo que viaja codificado es simplemente `cedula:contraseña`. WildFly y jakarta Security decodifican eso y llama al `ClienteIdentityStore`, que busca al cliente en la base de datos y verifica la contraseña usando BCrypt.
 
 #### Diagrama — qué pasa cuando se hace una consulta
 
