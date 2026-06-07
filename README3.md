@@ -2,27 +2,27 @@
 
 ## Iteración 2 — Seguridad
 
-> Autenticación, autorización y rate limiter sobre la API REST de la App Móvil.
+> Se protegió la API REST de la App Móvil con autenticación, autorización y un límite de consultas en el endpoint de histórico.
 
 ---
 
-### Qué se implementó
+### Qué se hizo
 
-Se protegieron los endpoints de la App Móvil usando **Jakarta Security con Basic Auth**. Solo los clientes registrados pueden acceder a sus propios datos. El endpoint de histórico de cargas tiene además un **rate limiter** basado en Token Bucket (Bucket4j) para evitar abuso de un endpoint costoso en recursos.
+Se agregó seguridad a los endpoints que usa la App Móvil. Para poder usarlos, el cliente tiene que identificarse con su cédula y contraseña. Además, se puso un límite de consultas en el endpoint de histórico para que no se pueda abusar de él.
 
 ---
 
-### Autenticación — Basic Auth
+### Cómo funciona el login — Basic Auth
 
-Basic Auth es el mecanismo de autenticación HTTP más simple. La App Móvil incluye en cada request un header con la cédula y contraseña del cliente codificadas en Base64:
+Cuando la App Móvil hace una consulta, manda en el encabezado del request la cédula y contraseña del cliente en formato codificado (Base64):
 
 ```
 Authorization: Basic MTIzNDU2Nzg6Y2xhdmUxMjM=
 ```
 
-Lo que viaja codificado es simplemente `cedula:contraseña`. WildFly decodifica ese header y llama al `ClienteIdentityStore`, que busca el cliente en la base de datos y verifica la contraseña con BCrypt.
+Lo que viaja codificado es simplemente `cedula:contraseña`. WildFly decodifica eso y llama al `ClienteIdentityStore`, que busca al cliente en la base de datos y verifica la contraseña usando BCrypt.
 
-#### Diagrama de secuencia
+#### Diagrama — qué pasa cuando se hace una consulta
 
 ```mermaid
 sequenceDiagram
@@ -44,67 +44,67 @@ sequenceDiagram
     API-->>App: 200 OK con datos
 ```
 
-Si las credenciales son incorrectas o el cliente no existe, WildFly responde **401 Unauthorized** sin llegar al endpoint.
+Si la cédula o contraseña son incorrectas, el servidor responde **401 Unauthorized** sin llegar al endpoint.
 
-> El `ClienteIdentityStore` inyecta `InterfaceLocalCliente` en lugar del repositorio directamente, respetando la arquitectura modular: los módulos externos no acceden a la infraestructura interna de otro módulo, sino a través de las interfaces que este expone.
+> El `ClienteIdentityStore` no accede directamente al repositorio de clientes, sino a través de `InterfaceLocalCliente`. Esto respeta la arquitectura modular del proyecto: los módulos no se meten en los detalles internos de otros módulos.
 
 ---
 
-### Endpoints — tabla de acceso
+### Qué endpoints requieren login
 
-Todos los controladores tienen `@DenyAll` a nivel de clase. Cada método declara explícitamente quién puede acceder.
+Por defecto, todos los endpoints están bloqueados (`@DenyAll` en la clase). Cada método declara explícitamente si es público o requiere login.
 
-| Endpoint | Acceso | Actor |
+| Endpoint | Acceso | Quién lo usa |
 |----------|--------|-------|
 | `POST /api/clientes/registrar` | Público | Cualquiera |
 | `GET /api/clientes` | Público | Gestor Web |
 | `POST /api/cargas/estaciones` | Público | Gestor Web |
 | `GET /api/cargas/estaciones` | Público | Gestor Web |
 | `POST /api/cargas/cargadores` | Público | Gestor Web |
-| `POST /api/clientes/{cedula}/medioPago` | `CLIENTE` | App Móvil |
-| `POST /api/clientes/{cedula}/reclamos` | `CLIENTE` | App Móvil |
-| `POST /api/cargas/iniciar` | `CLIENTE` | App Móvil |
-| `POST /api/cargas/finalizar` | `CLIENTE` | App Móvil |
-| `GET /api/cargas/activa` | `CLIENTE` | App Móvil |
-| `GET /api/cargas/historico` | `CLIENTE` + Rate Limiter | App Móvil |
-| `GET /api/pagos/{cedula}/listarPagos` | `CLIENTE` | App Móvil |
+| `POST /api/clientes/{cedula}/medioPago` | Requiere login | App Móvil |
+| `POST /api/clientes/{cedula}/reclamos` | Requiere login | App Móvil |
+| `POST /api/cargas/iniciar` | Requiere login | App Móvil |
+| `POST /api/cargas/finalizar` | Requiere login | App Móvil |
+| `GET /api/cargas/activa` | Requiere login | App Móvil |
+| `GET /api/cargas/historico` | Requiere login + límite de consultas | App Móvil |
+| `GET /api/pagos/{cedula}/listarPagos` | Requiere login | App Móvil |
 
 ---
 
-### Autorización a nivel de recurso
+### Verificación de que cada cliente solo accede a sus propios datos
 
-Además de verificar que el usuario está autenticado, se verifica que solo pueda operar sobre sus propios datos. Un cliente autenticado como `12345678` que intente acceder a datos de `111111` recibe **403 Forbidden**.
+No alcanza con verificar que el cliente esté logueado. También se verifica que solo pueda operar sobre sus propios datos. Si el cliente `12345678` intenta consultar o modificar datos del cliente `111111`, el servidor le responde **403 Forbidden**.
 
-| Código | Significado |
+| Código | Qué significa |
 |--------|-------------|
-| `401 Unauthorized` | No autenticado o credenciales incorrectas |
-| `403 Forbidden` | Autenticado pero intentando operar sobre datos de otro cliente |
+| `401 Unauthorized` | No se identificó o la contraseña es incorrecta |
+| `403 Forbidden` | Está logueado pero está intentando acceder a datos de otro cliente |
 
 ---
 
-### Rate Limiter — `/historico`
+### Límite de consultas en `/historico`
 
-El endpoint de histórico está protegido por un rate limiter basado en el algoritmo **Token Bucket**:
+El endpoint de histórico genera mucha carga en la base de datos, por eso se le puso un límite usando el algoritmo **Token Bucket** (balde de tokens):
 
 ```
-Balde con capacidad inicial de 10 tokens
-├── Cada request consume 1 token
-├── Si el balde está vacío → 429 Too Many Requests
-└── Se recargan 5 tokens por segundo
+Balde con 10 tokens al arrancar
+├── Cada consulta consume 1 token
+├── Si no hay tokens → 429 Too Many Requests
+└── Se agregan 5 tokens por segundo
 ```
 
-En la práctica el sistema acepta hasta 5 requests por segundo de forma sostenida. Los primeros 10 requests pasan todos gracias a la capacidad inicial del balde.
+En la práctica el sistema deja pasar hasta 5 consultas por segundo de forma continua. Las primeras 10 pasan todas gracias a los tokens iniciales del balde.
 
-#### Resultado de prueba con JMeter
+#### Prueba con JMeter
 
-JMeter configurado a 15 requests por segundo contra `/historico` con credenciales válidas:
+Se configuró JMeter para enviar 15 consultas por segundo contra `/historico` con credenciales válidas:
 
 ![Grafica JMeter Rate Limiter](./jmeter_rate_limiter.png)
 
-- **Línea roja (200):** requests procesados correctamente — había token disponible. Se estabiliza en ~5 por segundo, que es la tasa de recarga configurada.
-- **Línea azul (429):** requests bloqueados por el rate limiter — balde vacío.
+- **Línea roja (200):** consultas que pasaron — había token disponible. Se estabiliza en ~5 por segundo, que es la tasa de recarga del balde.
+- **Línea azul (429):** consultas bloqueadas — el balde estaba vacío.
 
-La clave para leer el gráfico: **rojo + azul ≈ 15** en cada segundo, porque JMeter siempre envía 15 requests. Lo que varía es cuántos pasan y cuántos son bloqueados según los tokens disponibles.
+La clave para leer el gráfico: **rojo + azul ≈ 15** en cada segundo, porque JMeter siempre manda 15 consultas. Lo que cambia es cuántas pasan y cuántas son bloqueadas según los tokens disponibles.
 
 ---
 
@@ -146,7 +146,7 @@ curl --user 12345678:clave123 "http://localhost:8080/TallerJavaEquipo6/api/carga
 curl --user 12345678:clave123 "http://localhost:8080/TallerJavaEquipo6/api/pagos/12345678/listarPagos?fechaIni=2026-01-01&fechaFin=2026-12-31"
 ```
 
-#### Autorización a nivel de recurso — debe dar 403
+#### Verificación de acceso a datos propios — debe dar 403
 
 ```bash
 # Cliente 12345678 intenta operar sobre datos de otro cliente
