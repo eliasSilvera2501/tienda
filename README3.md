@@ -33,7 +33,7 @@ sequenceDiagram
     participant BD as Base de Datos
     participant API as CargaAPI
 
-    App->>Auth: GET /historico\Authorization: Basic ...
+    App->>Auth: GET /historico/Authorization: Basic ...
     Auth->>Auth: Decodifica Base64 → "12345678:clave123"
     Auth->>IS: validate(cedula, contrasena)
     IS->>BD: buscarPorCedula("12345678")
