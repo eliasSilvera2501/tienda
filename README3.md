@@ -95,17 +95,38 @@ Balde con 10 tokens al arrancar
 
 En la práctica el sistema deja pasar hasta 5 consultas por segundo de forma continua. Las primeras 10 pasan todas gracias a los tokens iniciales del balde.
 
-#### Prueba con JMeter
+#### Cómo se configuró la prueba en JMeter
 
-Se configuró JMeter para enviar 15 consultas por segundo contra `/historico` con credenciales válidas:
+**Arrivals Thread Group** — define cuántos requests por segundo manda JMeter:
+
+![JMeter Arrivals Thread Group](./jmeter_thread_group.png)
+
+| Parámetro | Valor | Qué significa |
+|-----------|-------|-------------|
+| Target Rate | 15 | 15 consultas por segundo |
+| Ramp Up Time | 5 seg | Tarda 5 segundos en llegar a las 15 consultas/seg |
+| Hold Target Rate Time | 30 seg | Mantiene esa carga durante 30 segundos |
+
+**HTTP Request** — define a qué endpoint apunta cada consulta:
+
+![JMeter HTTP Request](./jmeter_http_request.png)
+
+Apunta a `GET /TallerJavaEquipo6/api/cargas/historico` en `localhost:8080` con los parámetros `cedulaCliente=12345678`, `fechaIni=2026-01-01` y `fechaFin=2026-12-31`.
+
+**HTTP Authorization Manager** — agrega las credenciales a cada consulta automáticamente:
+
+![JMeter Authorization Manager](./jmeter_auth_manager.png)
+
+Configura `username=12345678` y `password=clave123` para `http://localhost:8080`. JMeter las codifica en Base64 y las manda en el header `Authorization: Basic ...` de cada consulta, simulando exactamente lo que haría la App Móvil.
+
+#### Resultado — gráfica Response Codes per Second
 
 ![Grafica JMeter Rate Limiter](./jmeter_rate_limiter.png)
 
-- **Línea roja (200):** consultas que pasaron — había token disponible. Se estabiliza en ~5 por segundo, que es la tasa de recarga del balde.
+- **Línea roja (200):** consultas que llegaron al servidor y fueron respondidas — había lugar en el balde. Al principio la línea arranca más alta porque el balde empieza lleno con 10 tokens. Una vez que se gastan esos tokens iniciales, se estabiliza en ~5 por segundo, que es cuántos tokens se agregan por segundo.
 - **Línea azul (429):** consultas bloqueadas — el balde estaba vacío.
 
-La clave para leer el gráfico: **rojo + azul ≈ 15** en cada segundo, porque JMeter siempre manda 15 consultas. Lo que cambia es cuántas pasan y cuántas son bloqueadas según los tokens disponibles.
-
+La relación entre la configuración y el resultado de la grafica: JMeter manda 15 consultas por segundo, el límite deja pasar 5 (los que se recargan por segundo) y bloquea 10. Por eso rojo + azul ≈ 15 en cada segundo — lo que cambia es cuántas pasan y cuántas son bloqueadas dependiendo de cuántos tokens haya en el balde en ese momento.
 ---
 
 ### Pruebas con curl
