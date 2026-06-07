@@ -16,8 +16,9 @@ Se agregó seguridad a los endpoints que usa la App Móvil. Para poder usarlos, 
 
 Cuando la App Móvil hace una consulta, manda en el encabezado del request la cédula y contraseña del cliente en formato codificado (Base64):
 
+Algo asi: 
 ```
-Authorization: Basic MTIzNDU2Nzg6Y2xhdmUxMjM=
+Authorization: Basic MTIzNDU2N....
 ```
 
 Lo que viaja codificado es simplemente `cedula:contraseña`. WildFly decodifica eso y llama al `ClienteIdentityStore`, que busca al cliente en la base de datos y verifica la contraseña usando BCrypt.
@@ -32,7 +33,7 @@ sequenceDiagram
     participant BD as Base de Datos
     participant API as CargaAPI
 
-    App->>Auth: GET /historico\nAuthorization: Basic MTIz...
+    App->>Auth: GET /historico\Authorization: Basic ...
     Auth->>Auth: Decodifica Base64 → "12345678:clave123"
     Auth->>IS: validate(cedula, contrasena)
     IS->>BD: buscarPorCedula("12345678")
