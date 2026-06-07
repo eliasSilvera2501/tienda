@@ -1,10 +1,8 @@
----
 
 ## Iteración 2 — Seguridad
 
-> Se protegió la API REST de la App Móvil con autenticación, autorización y un límite de consultas en el endpoint de histórico.
+Se protegió la API REST de la App Móvil con autenticación, autorización y un límite de consultas en el endpoint de histórico.
 
----
 
 ### Qué se hizo
 
