@@ -7,17 +7,19 @@
 
 ## Índice
 
-1. [Descripción General](#descripción-general)
-2. [Decisiones de Diseño](#decisiones-de-diseño)
-3. [Arquitectura del Sistema](#arquitectura-del-sistema)
-4. [Estructura de Paquetes](#estructura-de-paquetes)
-5. [Módulo Clientes](#módulo-clientes)
-6. [Módulo Cargas](#módulo-cargas)
-7. [Módulo Pagos](#módulo-pagos)
-8. [Comunicación entre Módulos](#comunicación-entre-módulos)
-## Iteración 2
-9. [Integración con Sistemas Externos](#iteración-2--integración-con-sistemas-externos)
-10. [Seguridad — API REST App Móvil](#seguridad--api-rest-app-móvil)
+### Iteración 1
+- [Descripción General](#descripción-general)
+- [Decisiones de Diseño](#decisiones-de-diseño)
+- [Arquitectura del Sistema](#arquitectura-del-sistema)
+- [Estructura de Paquetes](#estructura-de-paquetes)
+- [Módulo Clientes](#módulo-clientes)
+- [Módulo Cargas](#módulo-cargas)
+- [Módulo Pagos](#módulo-pagos)
+- [Comunicación entre Módulos](#comunicación-entre-módulos)
+
+### Iteración 2
+- [Integración con Sistemas Externos](#iteración-2--integración-con-sistemas-externos)
+- [Seguridad — API REST App Móvil](#seguridad--api-rest-app-móvil)
 
 ---
 
