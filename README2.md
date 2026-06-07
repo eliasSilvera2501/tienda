@@ -618,7 +618,7 @@ Se agregó seguridad a los endpoints que usa la App Móvil. Para poder usarlos, 
 
 ---
 
-### Cómo funciona el login — Basic Auth
+### Cómo funciona la autenticación — Basic Auth
 
 Cuando la App Móvil hace una consulta, manda en el encabezado del request la cédula y contraseña del cliente en formato codificado (Base64):
 
@@ -686,7 +686,7 @@ No alcanza con verificar que el cliente esté logueado. También se verifica que
 
 ---
 
-### Límite de consultas en `/historico`
+### RATE LIMITER - Límite de consultas en `/historico`
 
 El endpoint de histórico genera mucha carga en la base de datos, por eso se le puso un límite usando el algoritmo **Token Bucket** (balde de tokens):
 
