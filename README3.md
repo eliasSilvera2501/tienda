@@ -46,8 +46,6 @@ sequenceDiagram
 
 Si la cédula o contraseña son incorrectas, el servidor responde **401 Unauthorized** sin llegar al endpoint.
 
-> El `ClienteIdentityStore` no accede directamente al repositorio de clientes, sino a través de `InterfaceLocalCliente`. Esto respeta la arquitectura modular del proyecto: los módulos no se meten en los detalles internos de otros módulos.
-
 ---
 
 ### Qué endpoints requieren login
@@ -78,7 +76,7 @@ No alcanza con verificar que el cliente esté logueado. También se verifica que
 | Código | Qué significa |
 |--------|-------------|
 | `401 Unauthorized` | No se identificó o la contraseña es incorrecta |
-| `403 Forbidden` | Está logueado pero está intentando acceder a datos de otro cliente |
+| `403 Forbidden` | Está logueado pero está intentando acceder a datos de otro cliente u otro rol |
 
 ---
 
@@ -109,19 +107,19 @@ En la práctica el sistema deja pasar hasta 5 consultas por segundo de forma con
 
 **HTTP Request** — define a qué endpoint apunta cada consulta:
 
-![JMeter HTTP Request](./img/jmeter_http_request.png)
+![JMeter HTTP Request](./img/http_request.png)
 
 Apunta a `GET /TallerJavaEquipo6/api/cargas/historico` en `localhost:8080` con los parámetros `cedulaCliente=12345678`, `fechaIni=2026-01-01` y `fechaFin=2026-12-31`.
 
 **HTTP Authorization Manager** — agrega las credenciales a cada consulta automáticamente:
 
-![JMeter Authorization Manager](./img/jmeter_auth_manager.png)
+![JMeter Authorization Manager](./img/autenticacion_manager.png)
 
 Configura `username=12345678` y `password=clave123` para `http://localhost:8080`. JMeter las codifica en Base64 y las manda en el header `Authorization: Basic ...` de cada consulta, simulando exactamente lo que haría la App Móvil.
 
 #### Resultado — gráfica Response Codes per Second
 
-![Grafica JMeter Rate Limiter](./img/jmeter_rate_limiter.png)
+![Grafica JMeter Rate Limiter](./img/grafica_jmeter.png)
 
 - **Línea roja (200):** consultas que llegaron al servidor y fueron respondidas — había lugar en el balde. Al principio la línea arranca más alta porque el balde empieza lleno con 10 tokens. Una vez que se gastan esos tokens iniciales, se estabiliza en ~5 por segundo, que es cuántos tokens se agregan por segundo.
 - **Línea azul (429):** consultas bloqueadas — el balde estaba vacío.
