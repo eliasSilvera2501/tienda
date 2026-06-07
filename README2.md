@@ -602,7 +602,9 @@ ModuloCarga ──► InterfaceLocalPago.pagarCarga() ──► ServicioPagoImpl
 > **Taller Java 2026 — UTEC Maldonado**  
 > Iteración 2: Integración con Sistemas Externos y Seguridad
 
-En esta iteración el sistema se integra con actores externos y se expone la API REST al exterior. El backend cumple dos roles: actúa como servidor (expone endpoints para la App Móvil, el Gestor Web y el Cargador) y actúa como cliente (consume los servicios externos de Medio de Pago y Facturación UTE).
+En esta iteración el sistema se integra con actores externos, se expone la API REST al exterior y se agregan mecanismos de seguridad para proteger los endpoints utilizados por la App Móvil.
+
+El backend cumple dos roles: actúa como servidor (expone endpoints para la App Móvil, el Gestor Web y el Cargador) y actúa como cliente (consume los servicios externos de Medio de Pago y Facturación UTE).
 
 ---
 
