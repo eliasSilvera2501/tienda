@@ -18,7 +18,6 @@
 - [Comunicación entre Módulos](#comunicación-entre-módulos)
 
 ### Iteración 2
-- [Integración con Sistemas Externos](#iteración-2--integración-con-sistemas-externos)
 - [Seguridad — API REST App Móvil](#seguridad--api-rest-app-móvil)
 
 ---
