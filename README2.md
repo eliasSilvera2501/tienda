@@ -15,6 +15,9 @@
 6. [Módulo Cargas](#módulo-cargas)
 7. [Módulo Pagos](#módulo-pagos)
 8. [Comunicación entre Módulos](#comunicación-entre-módulos)
+## Iteración 2
+9. [Integración con Sistemas Externos](#iteración-2--integración-con-sistemas-externos)
+10. [Seguridad — API REST App Móvil](#seguridad--api-rest-app-móvil)
 
 ---
 
@@ -586,6 +589,10 @@ ModuloCarga ──► InterfaceLocalPago.pagarCarga() ──► ServicioPagoImpl
 ---
 
 *Documentación para la Iteración 1 — Taller Java 2026, UTEC Maldonado.*
+
+---
+
+<br>
 
 ---
 
